@@ -8,7 +8,29 @@ package = "@netlify/plugin-nextjs"
 [functions]
 directory = ".netlify/functions"
 
+# Enable skew protection to prevent version mismatches during deploys
+[context.production.environment]
+NETLIFY_NEXT_SKEW_PROTECTION = "true"
+
+# Cache rules for optimal performance
+[[headers]]
+for = "/_next/static/*"
+[headers.values]
+  Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+for = "/_next/image*"
+[headers.values]
+  Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+for = "/public/*"
+[headers.values]
+  Cache-Control = "public, max-age=86400"
+
+# Redirect all other routes to catch Next.js routing
 [[redirects]]
 from = "/*"
-to = "/index.html"
+to = "/.netlify/functions/render"
 status = 200
+force = false
